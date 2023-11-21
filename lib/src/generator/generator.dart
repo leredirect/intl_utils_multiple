@@ -13,6 +13,7 @@ import 'templates.dart';
 class Generator {
   late String _className;
   late String? _parentClassName;
+  late String? _baseClassPath;
   late String _mainLocale;
   late String _arbDir;
   late String _outputDir;
@@ -40,6 +41,16 @@ class Generator {
       } else {
         warning(
             "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
+      }
+    }
+
+    _baseClassPath = null;
+    if (pubspecConfig.baseClassPath != null) {
+      if (isValidPath(pubspecConfig.baseClassPath!)) {
+        _baseClassPath = pubspecConfig.baseClassPath!;
+      } else {
+        warning(
+            "Config parameter 'arb_dir' requires valid path value (e.g. 'lib', 'res/', 'lib\\l10n').");
       }
     }
 
@@ -97,8 +108,8 @@ class Generator {
   Future<void> _updateGeneratedDir() async {
     var labels = _getLabelsFromMainArbFile();
     var locales = _orderLocales(getLocales(_arbDir));
-    var content = generateL10nDartFileContent(
-        _className, _parentClassName, labels, locales, _otaEnabled);
+    var content = generateL10nDartFileContent(_className, _parentClassName,
+        _baseClassPath, labels, locales, _otaEnabled);
     var formattedContent = formatDartContent(content, 'l10n.dart');
 
     await updateL10nDartFile(formattedContent, _outputDir);

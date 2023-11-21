@@ -2,11 +2,11 @@ import '../utils/utils.dart';
 import 'label.dart';
 
 String generateL10nDartFileContent(
-    String className, String? parentClassName, List<Label> labels, List<String> locales,
+    String className, String? parentClassName, String? baseClassPath, List<Label> labels, List<String> locales,
     [bool otaEnabled = false]) {
   return """
 // GENERATED CODE - DO NOT MODIFY BY HAND
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';${baseClassPath == null? '' : '\nimport \'$baseClassPath;\''}
 import 'package:intl/intl.dart';${otaEnabled ? '\n${_generateLocalizelySdkImport()}' : ''}
 import 'intl/messages_all.dart';
 

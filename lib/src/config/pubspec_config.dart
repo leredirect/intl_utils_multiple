@@ -7,6 +7,7 @@ class PubspecConfig {
   bool? _enabled;
   String? _className;
   String? _parentClassName;
+  String? _baseClassPath;
   String? _mainLocale;
   String? _arbDir;
   String? _outputDir;
@@ -41,6 +42,9 @@ class PubspecConfig {
     _parentClassName = flutterIntlConfig['parent_class_name'] is String
         ? flutterIntlConfig['parent_class_name']
         : null;
+    _baseClassPath = flutterIntlConfig['base_class_path'] is String
+        ? flutterIntlConfig['base_class_path']
+        : null;
     _mainLocale = flutterIntlConfig['main_locale'] is String
         ? flutterIntlConfig['main_locale']
         : null;
@@ -62,6 +66,8 @@ class PubspecConfig {
   String? get className => _className;
 
   String? get parentClassName => _parentClassName;
+
+  String? get baseClassPath => _baseClassPath;
 
   String? get mainLocale => _mainLocale;
 
