@@ -6,6 +6,7 @@ import 'config_exception.dart';
 class PubspecConfig {
   bool? _enabled;
   String? _className;
+  String? _parentClassName;
   String? _mainLocale;
   String? _arbDir;
   String? _outputDir;
@@ -36,6 +37,9 @@ class PubspecConfig {
         : null;
     _className = flutterIntlConfig['class_name'] is String
         ? flutterIntlConfig['class_name']
+        : null;
+    _className = flutterIntlConfig['class_name'] is String
+        ? flutterIntlConfig['parent_class_name']
         : null;
     _mainLocale = flutterIntlConfig['main_locale'] is String
         ? flutterIntlConfig['main_locale']

@@ -12,6 +12,7 @@ import 'templates.dart';
 /// The generator of localization files.
 class Generator {
   late String _className;
+  late String? _parentClassName;
   late String _mainLocale;
   late String _arbDir;
   late String _outputDir;
@@ -23,6 +24,7 @@ class Generator {
     var pubspecConfig = PubspecConfig();
 
     _className = defaultClassName;
+    _parentClassName = null;
     if (pubspecConfig.className != null) {
       if (isValidClassName(pubspecConfig.className!)) {
         _className = pubspecConfig.className!;
@@ -86,8 +88,8 @@ class Generator {
   Future<void> _updateGeneratedDir() async {
     var labels = _getLabelsFromMainArbFile();
     var locales = _orderLocales(getLocales(_arbDir));
-    var content =
-        generateL10nDartFileContent(_className, labels, locales, _otaEnabled);
+    var content = generateL10nDartFileContent(
+        _className, _parentClassName, labels, locales, _otaEnabled);
     var formattedContent = formatDartContent(content, 'l10n.dart');
 
     await updateL10nDartFile(formattedContent, _outputDir);

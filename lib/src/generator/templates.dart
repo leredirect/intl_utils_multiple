@@ -2,7 +2,7 @@ import '../utils/utils.dart';
 import 'label.dart';
 
 String generateL10nDartFileContent(
-    String className, List<Label> labels, List<String> locales,
+    String className, String? parentClassName, List<Label> labels, List<String> locales,
     [bool otaEnabled = false]) {
   return """
 // GENERATED CODE - DO NOT MODIFY BY HAND
@@ -19,7 +19,7 @@ import 'intl/messages_all.dart';
 // ignore_for_file: join_return_with_assignment, prefer_final_in_for_each
 // ignore_for_file: avoid_redundant_argument_values, avoid_escaping_inner_quotes
 
-class $className {
+class $className ${parentClassName == null ? '' : 'extend $parentClassName'}{
   $className();
 
   static $className? _current;
