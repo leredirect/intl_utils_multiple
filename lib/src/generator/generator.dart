@@ -36,7 +36,7 @@ class Generator {
     _parentClassName = null;
     if (pubspecConfig.parentClassName != null) {
       if (isValidClassName(pubspecConfig.parentClassName!)) {
-        _className = pubspecConfig.parentClassName!;
+        _parentClassName = pubspecConfig.parentClassName!;
       } else {
         warning(
             "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
