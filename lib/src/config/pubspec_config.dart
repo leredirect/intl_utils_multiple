@@ -61,6 +61,8 @@ class PubspecConfig {
 
   String? get className => _className;
 
+  String? get parentClassName => _parentClassName;
+
   String? get mainLocale => _mainLocale;
 
   String? get arbDir => _arbDir;

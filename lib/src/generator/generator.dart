@@ -24,10 +24,19 @@ class Generator {
     var pubspecConfig = PubspecConfig();
 
     _className = defaultClassName;
-    _parentClassName = null;
     if (pubspecConfig.className != null) {
       if (isValidClassName(pubspecConfig.className!)) {
         _className = pubspecConfig.className!;
+      } else {
+        warning(
+            "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
+      }
+    }
+
+    _parentClassName = null;
+    if (pubspecConfig.parentClassName != null) {
+      if (isValidClassName(pubspecConfig.parentClassName!)) {
+        _className = pubspecConfig.parentClassName!;
       } else {
         warning(
             "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
