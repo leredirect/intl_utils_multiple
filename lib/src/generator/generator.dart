@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:path/path.dart' as p;
+
 import '../config/pubspec_config.dart';
 import '../constants/constants.dart';
 import '../utils/file_utils.dart';
@@ -40,17 +42,18 @@ class Generator {
         _parentClassName = pubspecConfig.parentClassName!;
       } else {
         warning(
-            "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
+            "Config parameter 'parent_class_name' requires valid 'UpperCamelCase' value.");
       }
     }
 
     _baseClassPath = null;
     if (pubspecConfig.baseClassPath != null) {
-      if (isValidPath(pubspecConfig.baseClassPath!)) {
+      if (p.isAbsolute(pubspecConfig.baseClassPath!) ||
+          p.isRelative(pubspecConfig.baseClassPath!)) {
         _baseClassPath = pubspecConfig.baseClassPath!;
       } else {
         warning(
-            "Config parameter 'arb_dir' requires valid path value (e.g. 'lib', 'res/', 'lib\\l10n').");
+            "Config parameter 'base_class_path' requires valid path value (e.g. 'lib', 'res/', 'lib\\l10n').");
       }
     }
 
