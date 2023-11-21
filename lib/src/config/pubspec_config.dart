@@ -38,7 +38,7 @@ class PubspecConfig {
     _className = flutterIntlConfig['class_name'] is String
         ? flutterIntlConfig['class_name']
         : null;
-    _className = flutterIntlConfig['class_name'] is String
+    _parentClassName = flutterIntlConfig['parent_class_name'] is String
         ? flutterIntlConfig['parent_class_name']
         : null;
     _mainLocale = flutterIntlConfig['main_locale'] is String
