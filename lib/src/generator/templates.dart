@@ -29,8 +29,8 @@ class $className ${parentClassName == null ? '' : 'extends $parentClassName'}{
     return _current!;
   }
 
-  static const AppLocalizationDelegate delegate =
-    AppLocalizationDelegate();
+  static const ${className}Delegate delegate =
+    ${className}Delegate();
 
   static Future<$className> load(Locale locale) {
     final name = (locale.countryCode?.isEmpty ?? false) ? locale.languageCode : locale.toString();
