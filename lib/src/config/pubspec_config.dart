@@ -2,15 +2,14 @@ import 'package:yaml/yaml.dart' as yaml;
 
 import '../utils/file_utils.dart';
 import 'config_exception.dart';
+import 'localization_details.dart';
 
 class PubspecConfig {
+  List<LocalizationDetails>? _localizationDetails;
   bool? _enabled;
-  String? _className;
   String? _parentClassName;
   String? _baseClassPath;
   String? _mainLocale;
-  String? _arbDir;
-  String? _outputDir;
   bool? _useDeferredLoading;
   LocalizelyConfig? _localizelyConfig;
 
@@ -36,9 +35,21 @@ class PubspecConfig {
     _enabled = flutterIntlConfig['enabled'] is bool
         ? flutterIntlConfig['enabled']
         : null;
-    _className = flutterIntlConfig['class_name'] is String
-        ? flutterIntlConfig['class_name']
-        : null;
+
+    // _className = flutterIntlConfig['class_name'] is String
+    //     ? flutterIntlConfig['class_name']
+    //     : null;
+
+    _localizationDetails = [];
+    if (flutterIntlConfig['structure'] is yaml.YamlList) {
+      for (var d in flutterIntlConfig['structure']) {
+        _localizationDetails!.add(
+          LocalizationDetails.fromMap(
+            (d as yaml.YamlMap).map((k, v) => MapEntry(k, v)).values.first,
+          ),
+        );
+      }
+    }
     _parentClassName = flutterIntlConfig['parent_class_name'] is String
         ? flutterIntlConfig['parent_class_name']
         : null;
@@ -48,12 +59,12 @@ class PubspecConfig {
     _mainLocale = flutterIntlConfig['main_locale'] is String
         ? flutterIntlConfig['main_locale']
         : null;
-    _arbDir = flutterIntlConfig['arb_dir'] is String
-        ? flutterIntlConfig['arb_dir']
-        : null;
-    _outputDir = flutterIntlConfig['output_dir'] is String
-        ? flutterIntlConfig['output_dir']
-        : null;
+    // _arbDir = flutterIntlConfig['arb_dir'] is String
+    //     ? flutterIntlConfig['arb_dir']
+    //     : null;
+    // _outputDir = flutterIntlConfig['output_dir'] is String
+    //     ? flutterIntlConfig['output_dir']
+    //     : null;
     _useDeferredLoading = flutterIntlConfig['use_deferred_loading'] is bool
         ? flutterIntlConfig['use_deferred_loading']
         : null;
@@ -63,7 +74,9 @@ class PubspecConfig {
 
   bool? get enabled => _enabled;
 
-  String? get className => _className;
+  // String? get className => _className;
+
+  List<LocalizationDetails>? get localizationDetails => _localizationDetails;
 
   String? get parentClassName => _parentClassName;
 
@@ -71,9 +84,9 @@ class PubspecConfig {
 
   String? get mainLocale => _mainLocale;
 
-  String? get arbDir => _arbDir;
+  // String? get arbDir => _arbDir;
 
-  String? get outputDir => _outputDir;
+  // String? get outputDir => _outputDir;
 
   bool? get useDeferredLoading => _useDeferredLoading;
 

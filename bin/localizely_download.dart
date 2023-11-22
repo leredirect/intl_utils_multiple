@@ -51,7 +51,7 @@ Future<void> main(List<String> arguments) async {
         'arb-dir',
         help: 'Directory of the arb files.',
         callback: ((x) => arbDir = x!),
-        defaultsTo: pubspecConfig.arbDir ?? defaultArbDir,
+        // defaultsTo: pubspecConfig.arbDir ?? defaultArbDir,
       )
       ..addOption(
         'branch',

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
+import 'package:intl_utils/src/config/localization_details.dart';
 import 'package:path/path.dart' as p;
 
-import '../config/pubspec_config.dart';
 import '../constants/constants.dart';
 import '../utils/file_utils.dart';
 import '../utils/utils.dart';
@@ -23,23 +23,26 @@ class Generator {
   late bool _otaEnabled;
 
   /// Creates a new generator with configuration from the 'pubspec.yaml' file.
-  Generator() {
-    var pubspecConfig = PubspecConfig();
-
+  Generator({
+    required LocalizationDetails details,
+    String? parentClassName,
+    String? baseClassPath,
+    String? mainLocale,
+    bool? useDeferredLoading,
+    bool? otaEnabled,
+  }) {
     _className = defaultClassName;
-    if (pubspecConfig.className != null) {
-      if (isValidClassName(pubspecConfig.className!)) {
-        _className = pubspecConfig.className!;
-      } else {
-        warning(
-            "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
-      }
+    if (isValidClassName(details.className)) {
+      _className = details.className;
+    } else {
+      warning(
+          "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
     }
 
     _parentClassName = null;
-    if (pubspecConfig.parentClassName != null) {
-      if (isValidClassName(pubspecConfig.parentClassName!)) {
-        _parentClassName = pubspecConfig.parentClassName!;
+    if (parentClassName != null) {
+      if (isValidClassName(parentClassName)) {
+        _parentClassName = parentClassName;
       } else {
         warning(
             "Config parameter 'parent_class_name' requires valid 'UpperCamelCase' value.");
@@ -47,10 +50,9 @@ class Generator {
     }
 
     _baseClassPath = null;
-    if (pubspecConfig.baseClassPath != null) {
-      if (p.isAbsolute(pubspecConfig.baseClassPath!) ||
-          p.isRelative(pubspecConfig.baseClassPath!)) {
-        _baseClassPath = pubspecConfig.baseClassPath!;
+    if (baseClassPath != null) {
+      if (p.isAbsolute(baseClassPath) || p.isRelative(baseClassPath)) {
+        _baseClassPath = baseClassPath;
       } else {
         warning(
             "Config parameter 'base_class_path' requires valid path value (e.g. 'lib', 'res/', 'lib\\l10n').");
@@ -58,9 +60,9 @@ class Generator {
     }
 
     _mainLocale = defaultMainLocale;
-    if (pubspecConfig.mainLocale != null) {
-      if (isValidLocale(pubspecConfig.mainLocale!)) {
-        _mainLocale = pubspecConfig.mainLocale!;
+    if (mainLocale != null) {
+      if (isValidLocale(mainLocale)) {
+        _mainLocale = mainLocale;
       } else {
         warning(
             "Config parameter 'main_locale' requires value consisted of language code and optional script and country codes separated with underscore (e.g. 'en', 'en_GB', 'zh_Hans', 'zh_Hans_CN').");
@@ -68,30 +70,24 @@ class Generator {
     }
 
     _arbDir = defaultArbDir;
-    if (pubspecConfig.arbDir != null) {
-      if (isValidPath(pubspecConfig.arbDir!)) {
-        _arbDir = pubspecConfig.arbDir!;
-      } else {
-        warning(
-            "Config parameter 'arb_dir' requires valid path value (e.g. 'lib', 'res/', 'lib\\l10n').");
-      }
+    if (isValidPath(details.arbDir)) {
+      _arbDir = details.arbDir;
+    } else {
+      warning(
+          "Config parameter 'arb_dir' requires valid path value (e.g. 'lib', 'res/', 'lib\\l10n').");
     }
 
     _outputDir = defaultOutputDir;
-    if (pubspecConfig.outputDir != null) {
-      if (isValidPath(pubspecConfig.outputDir!)) {
-        _outputDir = pubspecConfig.outputDir!;
-      } else {
-        warning(
-            "Config parameter 'output_dir' requires valid path value (e.g. 'lib', 'lib\\generated').");
-      }
+    if (isValidPath(details.outputDir)) {
+      _outputDir = details.outputDir;
+    } else {
+      warning(
+          "Config parameter 'output_dir' requires valid path value (e.g. 'lib', 'lib\\generated').");
     }
 
-    _useDeferredLoading =
-        pubspecConfig.useDeferredLoading ?? defaultUseDeferredLoading;
+    _useDeferredLoading = useDeferredLoading ?? defaultUseDeferredLoading;
 
-    _otaEnabled =
-        pubspecConfig.localizelyConfig?.otaEnabled ?? defaultOtaEnabled;
+    _otaEnabled = otaEnabled ?? defaultOtaEnabled;
   }
 
   /// Generates localization files.
