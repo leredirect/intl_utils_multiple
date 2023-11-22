@@ -71,7 +71,7 @@ ${locales.map((locale) => _generateLocale(locale)).join("\n")}
   @override
   Future<$className> load(Locale locale) => $className.load(locale);
   @override
-  bool shouldReload(AppLocalizationDelegate old) => false;
+  bool shouldReload(${className}Delegate old) => false;
 
   bool _isSupported(Locale locale) {
     for (var supportedLocale in supportedLocales) {
