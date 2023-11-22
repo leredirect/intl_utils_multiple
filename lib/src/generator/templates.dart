@@ -57,7 +57,7 @@ ${otaEnabled ? '\n${_generateMetadata(labels)}\n' : ''}
 ${labels.map((label) => label.generateDartGetter()).join("\n\n")}
 }
 
-class AppLocalizationDelegate extends LocalizationsDelegate<$className> {
+class ${className}Delegate extends LocalizationsDelegate<$className> {
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
