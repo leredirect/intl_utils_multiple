@@ -58,7 +58,7 @@ ${labels.map((label) => label.generateDartGetter()).join("\n\n")}
 }
 
 class ${className}Delegate extends LocalizationsDelegate<$className> {
-  const AppLocalizationDelegate();
+  const ${className}Delegate();
 
   List<Locale> get supportedLocales {
     return const <Locale>[
