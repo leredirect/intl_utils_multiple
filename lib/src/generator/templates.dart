@@ -55,7 +55,10 @@ class $className ${parentClassName == null ? '' : 'extends $parentClassName'}{
   }
 ${otaEnabled ? '\n${_generateMetadata(labels)}\n' : ''}
 ${labels.map((label) => label.generateDartGetter()).join("\n\n")}
+
 }
+
+${labels.isNotEmpty? 'enum ${className}Names {${labels.map((label) => label.name).join(",\n")}}' : ''}
 
 class ${className}Delegate extends LocalizationsDelegate<$className> {
   const ${className}Delegate();

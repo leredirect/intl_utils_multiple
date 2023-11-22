@@ -30,9 +30,9 @@ flutter_intl:
   structure:
     - oxford:
         class_name: OxfordDictionaryS
-        arb_dir: /lib/oxford/arb/
-        output_dir: /lib/oxford/generated/
-    - american_heritage:
-        class_name: AmericanHeritageS
-        arb_dir: /lib/am_heritage/arb/
-        output_dir: /lib/am_heritage/generated/
+        arb_dir: lib/oxford/arb/
+        output_dir: lib/oxford/generated/
+#    - american_heritage:
+#        class_name: AmericanHeritageS
+#        arb_dir: lib/am_heritage/arb/
+#        output_dir: lib/am_heritage/generated/
