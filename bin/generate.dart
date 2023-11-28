@@ -16,11 +16,8 @@ Future<void> main(List<String> args) async {
     for (var detailItem in details) {
       var generator = Generator(
         details: detailItem,
-        parentClassName: config.parentClassName,
-        baseClassPath: config.baseClassPath,
         mainLocale: config.mainLocale,
         useDeferredLoading: config.useDeferredLoading,
-        otaEnabled: config.localizelyConfig?.otaEnabled,
       );
       await generator.generateAsync();
     }

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:intl_utils/src/config/localization_details.dart';
-import 'package:path/path.dart' as p;
 
 import '../constants/constants.dart';
 import '../utils/file_utils.dart';
@@ -14,8 +13,6 @@ import 'templates.dart';
 /// The generator of localization files.
 class Generator {
   late String _className;
-  late String? _parentClassName;
-  late String? _baseClassPath;
   late String _mainLocale;
   late String _arbDir;
   late String _outputDir;
@@ -37,26 +34,6 @@ class Generator {
     } else {
       warning(
           "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
-    }
-
-    _parentClassName = null;
-    if (parentClassName != null) {
-      if (isValidClassName(parentClassName)) {
-        _parentClassName = parentClassName;
-      } else {
-        warning(
-            "Config parameter 'parent_class_name' requires valid 'UpperCamelCase' value.");
-      }
-    }
-
-    _baseClassPath = null;
-    if (baseClassPath != null) {
-      if (p.isAbsolute(baseClassPath) || p.isRelative(baseClassPath)) {
-        _baseClassPath = baseClassPath;
-      } else {
-        warning(
-            "Config parameter 'base_class_path' requires valid path value (e.g. 'lib', 'res/', 'lib\\l10n').");
-      }
     }
 
     _mainLocale = defaultMainLocale;
@@ -107,8 +84,8 @@ class Generator {
   Future<void> _updateGeneratedDir() async {
     var labels = _getLabelsFromMainArbFile();
     var locales = _orderLocales(getLocales(_arbDir));
-    var content = generateL10nDartFileContent(_className, _parentClassName,
-        _baseClassPath, labels, locales, _otaEnabled);
+    var content =
+        generateL10nDartFileContent(_className, labels, locales, _otaEnabled);
     var formattedContent = formatDartContent(content, 'l10n.dart');
 
     await updateL10nDartFile(formattedContent, _outputDir);

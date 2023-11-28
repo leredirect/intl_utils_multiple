@@ -22,17 +22,3 @@ dev_dependencies:
   lints: ^2.0.0
   mockito: ^5.0.12
   test: ^1.16.0
-
-flutter_intl:
-  enabled: true
-  parent_class_name: S
-  parent_class_path: /lib/
-  structure:
-    - oxford:
-        class_name: OxfordDictionaryS
-        arb_dir: lib/oxford/arb/
-        output_dir: lib/oxford/generated/
-#    - american_heritage:
-#        class_name: AmericanHeritageS
-#        arb_dir: lib/am_heritage/arb/
-#        output_dir: lib/am_heritage/generated/
