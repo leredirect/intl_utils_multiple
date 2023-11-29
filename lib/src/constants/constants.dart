@@ -2,8 +2,11 @@ import 'package:path/path.dart';
 
 const defaultClassName = 'S';
 const defaultMainLocale = 'en';
-final defaultArbDir = join('lib', 'l10n');
-final defaultOutputDir = join('lib', 'generated');
+const defaultBaseClassName = 'MonoLocalizationLibrary';
+final defaultBaseClassPath = join('lib', 'localization', 'mono_localization_base.dart');
+final defaultWidgetPath = join('lib', 'localization', 'mono_localization_provider.dart');
+final defaultArbDir = join('lib', 'localization', 'l10n');
+final defaultOutputDir = join('lib', 'localization', 'generated');
 const defaultUseDeferredLoading = false;
 const defaultUploadOverwrite = false;
 const defaultUploadAsReviewed = false;

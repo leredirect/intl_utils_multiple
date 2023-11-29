@@ -8,6 +8,9 @@ class PubspecConfig {
   List<LocalizationDetails>? _localizationDetails;
   bool? _enabled;
   String? _mainLocale;
+  String? _baseClassName;
+  String? _baseClassPath;
+  String? _widgetPath;
   bool? _useDeferredLoading;
 
   PubspecConfig() {
@@ -46,6 +49,15 @@ class PubspecConfig {
     _mainLocale = flutterIntlConfig['main_locale'] is String
         ? flutterIntlConfig['main_locale']
         : null;
+    _baseClassName = flutterIntlConfig['base_class_name'] is String
+        ? flutterIntlConfig['base_class_name']
+        : null;
+    _widgetPath = flutterIntlConfig['widget_path'] is String
+        ? flutterIntlConfig['widget_path']
+        : null;
+    _baseClassPath = flutterIntlConfig['base_class_path'] is String
+        ? flutterIntlConfig['base_class_path']
+        : null;
     _useDeferredLoading = flutterIntlConfig['use_deferred_loading'] is bool
         ? flutterIntlConfig['use_deferred_loading']
         : null;
@@ -53,15 +65,15 @@ class PubspecConfig {
 
   bool? get enabled => _enabled;
 
-  // String? get className => _className;
+  String? get baseClassName => _baseClassName;
+
+  String? get baseClassPath => _baseClassPath;
+
+  String? get widgetPath => _widgetPath;
 
   List<LocalizationDetails>? get localizationDetails => _localizationDetails;
 
   String? get mainLocale => _mainLocale;
-
-  // String? get arbDir => _arbDir;
-
-  // String? get outputDir => _outputDir;
 
   bool? get useDeferredLoading => _useDeferredLoading;
 }

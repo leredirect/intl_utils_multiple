@@ -122,3 +122,88 @@ String _generateMetadata(List<Label> labels) {
     '  };'
   ].join('\n');
 }
+
+String generateBaseClassContent(String baseClassName) {
+  return '''
+import 'package:intl/message_lookup_by_library.dart';
+
+abstract class $baseClassName {
+  MessageLookupByLibrary? findExact(String localeName);
+}
+''';
+}
+
+String generateWidgetContent({
+  required List<Label> labels,
+  required String baseClassPath,
+  required String baseClassName,
+}) {
+  return '''
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/message_lookup_by_library.dart';
+
+import '$baseClassPath';
+
+class MonoLocalizationsProvider extends InheritedWidget {
+  const MonoLocalizationsProvider({
+    required this.delegates,
+    required super.child,
+    this.currentLocale,
+    super.key,
+  });
+
+  final Locale? currentLocale;
+  final List<${baseClassName}> delegates;
+
+  static MonoLocalizationsProvider? maybeOf(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<MonoLocalizationsProvider>();
+  }
+
+  static MonoLocalizationsProvider of(BuildContext context) {
+    final MonoLocalizationsProvider? result = maybeOf(context);
+    assert(result != null, 'No MonoLocalizationsProvider found in context');
+    return result!;
+  }
+
+  String? _lookup(String name) {
+    List<MessageLookupByLibrary> libraries = [];
+    for (var delegate in delegates) {
+      MessageLookupByLibrary? library = delegate.findExact(
+          currentLocale?.languageCode ??
+              Intl.getCurrentLocale().split('_').first);
+      if (library != null) {
+        libraries.add(library);
+      }
+    }
+
+    String? translation;
+
+    for (var library in libraries) {
+      if (library.messages.containsKey(name)) {
+        translation = (library.messages[name] as String Function()).call();
+        break;
+      }
+    }
+    return translation;
+  }
+
+  @override
+  bool updateShouldNotify(covariant MonoLocalizationsProvider oldWidget) {
+    return oldWidget.delegates != delegates;
+  }
+
+  ${_generateLabels(labels)}
+}
+''';
+}
+
+String _generateLabels(List<Label> labels) {
+  StringBuffer result = StringBuffer();
+  for (var label in labels) {
+    result.write(
+        "String get ${label.name} => _lookup('${label.name}') ?? '${label.content}';");
+  }
+  return result.toString();
+}

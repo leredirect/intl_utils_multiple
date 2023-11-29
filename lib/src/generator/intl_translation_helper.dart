@@ -39,7 +39,6 @@ import '../intl_translation/extract_messages.dart';
 import '../intl_translation/generate_localized.dart';
 import '../intl_translation/src/icu_parser.dart';
 import '../intl_translation/src/intl_message.dart';
-
 import '../utils/utils.dart';
 
 class IntlTranslationHelper {
@@ -59,7 +58,13 @@ class IntlTranslationHelper {
   }
 
   void generateFromArb(
-      String outputDir, List<String> dartFiles, List<String> arbFiles) {
+    String outputDir,
+    List<String> dartFiles,
+    List<String> arbFiles,
+    String className,
+    String baseClassName,
+    String baseClassPath,
+  ) {
     var allMessages = dartFiles.map((file) => extraction.parseFile(File(file)));
     for (var messageMap in allMessages) {
       messageMap.forEach(
@@ -78,7 +83,13 @@ class IntlTranslationHelper {
     var fileName = '${generation.generatedFilePrefix}messages_all.dart';
     var mainImportFile = File(path.join(outputDir, fileName));
 
-    var content = generation.generateMainImportFile();
+    var content = generation.generateMainImportFile(
+      className: className,
+      baseClassName: baseClassName,
+      baseClassPath: path.absolute(baseClassPath),
+      currentFilePath: mainImportFile.path
+          .replaceAll(path.basename(mainImportFile.path), ''),
+    );
     var formattedContent = formatDartContent(content, fileName);
 
     mainImportFile.writeAsStringSync(formattedContent);

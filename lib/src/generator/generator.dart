@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:intl_utils/src/config/localization_details.dart';
+import 'package:path/path.dart';
 
 import '../constants/constants.dart';
 import '../utils/file_utils.dart';
@@ -13,6 +15,8 @@ import 'templates.dart';
 /// The generator of localization files.
 class Generator {
   late String _className;
+  late String _baseClassName;
+  late String _baseClassPath;
   late String _mainLocale;
   late String _arbDir;
   late String _outputDir;
@@ -22,8 +26,8 @@ class Generator {
   /// Creates a new generator with configuration from the 'pubspec.yaml' file.
   Generator({
     required LocalizationDetails details,
-    String? parentClassName,
-    String? baseClassPath,
+    required String baseClassName,
+    required String baseClassPath,
     String? mainLocale,
     bool? useDeferredLoading,
     bool? otaEnabled,
@@ -35,6 +39,19 @@ class Generator {
       warning(
           "Config parameter 'class_name' requires valid 'UpperCamelCase' value.");
     }
+
+    if (isValidClassName(baseClassName)) {
+      _baseClassName = baseClassName;
+    } else {
+      warning(
+          "Config parameter 'base_class_name' requires valid 'UpperCamelCase' value.");
+    }
+
+    _baseClassPath = baseClassPath;
+    // } else {
+    //   warning(
+    //       "Config parameter 'base_class_name' requires valid 'UpperCamelCase' value.");
+    // }
 
     _mainLocale = defaultMainLocale;
     if (mainLocale != null) {
@@ -72,6 +89,7 @@ class Generator {
     await _updateL10nDir();
     await _updateGeneratedDir();
     await _generateDartFiles();
+    await _removeL10nFiles();
   }
 
   Future<void> _updateL10nDir() async {
@@ -148,6 +166,46 @@ class Generator {
     var arbFiles = getArbFiles(_arbDir).map((file) => file.path).toList();
 
     var helper = IntlTranslationHelper(_useDeferredLoading);
-    helper.generateFromArb(outputDir, dartFiles, arbFiles);
+    helper.generateFromArb(
+      outputDir,
+      dartFiles,
+      arbFiles,
+      _className,
+      _baseClassName,
+      _baseClassPath,
+    );
+  }
+
+  Future<void> _removeL10nFiles() async {
+    File file = File(getL10nDartFilePath(_outputDir));
+    await file.delete();
+  }
+
+  static generateBaseClass({
+    required String baseClassPath,
+    required String baseClassName,
+  }) async {
+    File file = File(baseClassPath);
+    print(file.path);
+    await file.create(recursive: true);
+    await file.writeAsString(generateBaseClassContent(baseClassName));
+  }
+
+  static Future<void> generateWidget({
+    required String widgetPath,
+    required String baseClassName,
+    required String baseClassPath,
+  }) async {
+    File widgetFile = File(widgetPath);
+    await widgetFile.writeAsString(
+      generateWidgetContent(
+        labels: [],
+        baseClassPath: relative(
+          baseClassPath,
+          from: widgetPath.replaceAll(basename(widgetPath), ''),
+        ),
+        baseClassName: baseClassName,
+      ),
+    );
   }
 }

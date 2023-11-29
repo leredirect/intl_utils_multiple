@@ -45,9 +45,10 @@
 /// in test/message_extract/generate_from_json.dart
 library generate_localized;
 
-import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 
 import './src/intl_message.dart';
@@ -240,9 +241,14 @@ ${releaseMode ? overrideLookup : ''}""";
 
   /// This section generates the messages_all.dart file based on the list of
   /// [allLocales].
-  String generateMainImportFile() {
+  String generateMainImportFile({
+    required String className,
+    required String baseClassName,
+    required String baseClassPath,
+    required String currentFilePath,
+  }) {
     clearOutput();
-    output.write(mainPrologue);
+    output.write(mainPrologue(baseClassPath, currentFilePath));
     for (var locale in allLocales) {
       var baseFile = '${generatedFilePrefix}messages_$locale.dart';
       var file = importForGeneratedFile(baseFile);
@@ -261,7 +267,8 @@ ${releaseMode ? overrideLookup : ''}""";
       output.write(loadOperation);
     }
     output.write('};\n');
-    output.write('\nMessageLookupByLibrary? _findExact(String localeName) {\n'
+    output.write('class $className extends $baseClassName { ');
+    output.write('\n@override\nMessageLookupByLibrary? findExact(String localeName) {\n'
         '  switch (localeName) {\n');
     for (var rawLocale in allLocales) {
       var locale = Intl.canonicalizedLocale(rawLocale);
@@ -274,7 +281,7 @@ ${releaseMode ? overrideLookup : ''}""";
 
   /// Constant string used in [generateMainImportFile] for the beginning of the
   /// file.
-  String get mainPrologue => """
+  String mainPrologue(String baseClassPath, String currentFilePath) => """
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
 // This is a library that looks up messages for specific locales by
 // delegating to the appropriate library.
@@ -291,6 +298,7 @@ ${useDeferredLoading ? '' : "\nimport 'package:flutter/foundation.dart';"}
 import 'package:$intlImportPath/intl.dart';
 import 'package:$intlImportPath/message_lookup_by_library.dart';
 import 'package:$intlImportPath/src/intl_helpers.dart';
+import '${path.relative(baseClassPath, from: currentFilePath)}';
 
 """;
 
@@ -318,7 +326,7 @@ Future<bool> initializeMessages(String localeName) ${useDeferredLoading ? 'async
 
 bool _messagesExistFor(String locale) {
   try {
-    return _findExact(locale) != null;
+    return findExact(locale) != null;
   } catch (e) {
     return false;
   }
@@ -328,7 +336,8 @@ MessageLookupByLibrary? _findGeneratedMessagesFor(String locale) {
   var actualLocale = Intl.verifiedLocale(locale, _messagesExistFor,
       onFailure: (_) => null);
   if (actualLocale == null) return null;
-  return _findExact(actualLocale);
+  return findExact(actualLocale);
+}
 }
 ''';
 }
@@ -477,6 +486,7 @@ abstract class TranslatedMessage {
 
   /// For backward compatibility, we still have the originalMessage API.
   MainMessage? get originalMessage => originalMessages?.first;
+
   set originalMessage(MainMessage? m) {
     if (m != null) {
       originalMessages = [m];
