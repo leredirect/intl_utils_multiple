@@ -5,6 +5,7 @@ import 'package:intl_utils/src/config/localization_details.dart';
 import 'package:intl_utils/src/config/pubspec_config.dart';
 import 'package:intl_utils/src/constants/constants.dart';
 import 'package:intl_utils/src/generator/generator_exception.dart';
+import 'package:intl_utils/src/utils/labels_preserver.dart';
 import 'package:intl_utils/src/utils/utils.dart';
 
 Future<void> main(List<String> args) async {
@@ -29,6 +30,7 @@ Future<void> main(List<String> args) async {
       await generator.generateAsync();
     }
     await Generator.generateWidget(
+      labels: LabelsPreserver().labels,
       widgetPath: config.widgetPath ?? defaultWidgetPath,
       baseClassName: baseClassName,
       baseClassPath: baseClassPath,

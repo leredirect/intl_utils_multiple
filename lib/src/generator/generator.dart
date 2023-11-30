@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dart_style/dart_style.dart';
 import 'package:intl_utils/src/config/localization_details.dart';
+import 'package:intl_utils/src/utils/labels_preserver.dart';
 import 'package:path/path.dart';
 
 import '../constants/constants.dart';
@@ -14,6 +16,7 @@ import 'templates.dart';
 
 /// The generator of localization files.
 class Generator {
+  late bool _base;
   late String _className;
   late String _baseClassName;
   late String _baseClassPath;
@@ -52,6 +55,8 @@ class Generator {
     //   warning(
     //       "Config parameter 'base_class_name' requires valid 'UpperCamelCase' value.");
     // }
+
+    _base = details.base;
 
     _mainLocale = defaultMainLocale;
     if (mainLocale != null) {
@@ -145,7 +150,9 @@ class Generator {
       return Label(name, content,
           type: type, description: description, placeholders: placeholders);
     }).toList();
-
+    if (_base) {
+      LabelsPreserver().updateLabels(labels);
+    }
     return labels;
   }
 
@@ -192,20 +199,23 @@ class Generator {
   }
 
   static Future<void> generateWidget({
+    required List<Label> labels,
     required String widgetPath,
     required String baseClassName,
     required String baseClassPath,
   }) async {
-    File widgetFile = File(widgetPath);
-    await widgetFile.writeAsString(
-      generateWidgetContent(
-        labels: [],
-        baseClassPath: relative(
-          baseClassPath,
-          from: widgetPath.replaceAll(basename(widgetPath), ''),
-        ),
-        baseClassName: baseClassName,
+    String rawContent = generateWidgetContent(
+      labels: labels,
+      baseClassPath: relative(
+        baseClassPath,
+        from: widgetPath.replaceAll(basename(widgetPath), ''),
       ),
+      baseClassName: baseClassName,
     );
+
+    DartFormatter formatter = DartFormatter();
+    String formattedContent = formatter.format(rawContent);
+    File widgetFile = File(widgetPath);
+    await widgetFile.writeAsString(formattedContent);
   }
 }
