@@ -203,7 +203,7 @@ String _generateLabels(List<Label> labels) {
   StringBuffer result = StringBuffer();
   for (var label in labels) {
     result.write(
-        "String get ${label.name} => _lookup('${label.name}') ?? '${label.content}';");
+        "String get ${label.name} => _lookup('${label.name}') ?? '${label.name}';");
   }
   return result.toString();
 }
