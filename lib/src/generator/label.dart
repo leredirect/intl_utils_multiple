@@ -211,11 +211,16 @@ class Placeholder {
   bool get requiresFormatting =>
       <String>['DateTime', 'double', 'num', 'int'].contains(type) &&
       format != null;
+
   bool get isNumber => <String>['double', 'int', 'num'].contains(type);
+
   bool get hasValidNumberFormat => _validNumberFormats.contains(format);
+
   bool get hasNumberFormatWithParameters =>
       _numberFormatsWithNamedParameters.contains(format);
+
   bool get isDate => 'DateTime' == type;
+
   bool get hasValidDateFormat => _validDateFormats.contains(format);
 
   static String? _stringAttribute(
@@ -1194,5 +1199,34 @@ class Label {
         .replaceAll('\b', '\\b')
         .replaceAll('\f', '\\f')
         .replaceAll('`', '\'');
+  }
+
+  String generateLabel() {
+    var content = _escape(this.content);
+
+    var parsedContent = parser.parse(content);
+    if (parsedContent == null) {
+      throw ParseException();
+    }
+
+    var args = _getArgs(placeholders, parsedContent);
+    var contentType = _getContentType(parsedContent, args);
+
+    var isValid = _validate(name, content, args);
+    if (!isValid) {
+      throw ValidationException();
+    }
+    switch (contentType) {
+      case ContentType.literal:
+        return "String get $name => _lookup('$name') ?? '$name';";
+      case ContentType.argument:
+        return 'String $name(${_generateDartMethodParameters(args)}) => _lookup($name, args: [${_generateDartMethodArgs(args)}]) ?? $name';
+      case ContentType.plural:
+      case ContentType.gender:
+      case ContentType.select:
+      case ContentType.compound:
+      default:
+        return 'missing';
+    }
   }
 }

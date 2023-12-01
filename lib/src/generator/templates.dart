@@ -154,7 +154,7 @@ class MonoLocalizationsProvider extends InheritedWidget {
   });
 
   final Locale? currentLocale;
-  final List<${baseClassName}> delegates;
+  final List<$baseClassName> delegates;
 
   static MonoLocalizationsProvider? maybeOf(BuildContext context) {
     return context
@@ -167,43 +167,42 @@ class MonoLocalizationsProvider extends InheritedWidget {
     return result!;
   }
 
-  String? _lookup(String name) {
-    List<MessageLookupByLibrary> libraries = [];
-    for (var delegate in delegates) {
-      MessageLookupByLibrary? library = delegate.findExact(
-          currentLocale?.languageCode ??
-              Intl.getCurrentLocale().split('_').first);
-      if (library != null) {
-        libraries.add(library);
-      }
+  String? _lookup(
+    String name, {
+      List<dynamic>? args = const [],
+    }) {
+  List<MessageLookupByLibrary> libraries = [];
+  for (var delegate in delegates) {
+    MessageLookupByLibrary? library = delegate.findExact(
+        currentLocale?.languageCode ??
+            Intl.getCurrentLocale().split('_').first);
+    if (library != null) {
+      libraries.add(library);
     }
-
-    String? translation;
-
-    for (var library in libraries) {
-      if (library.messages.containsKey(name)) {
-        translation = (library.messages[name] as String Function()).call();
-        break;
-      }
-    }
-    return translation;
   }
+  Function? translation;
+  for (var library in libraries) {
+    if (library.messages.containsKey(name)) {
+      translation = (library.messages[name] as Function);
+      break;
+    }
+  }
+  if (translation == null) {
+    return null;
+  }
+  if (args != null && args.isNotEmpty) {
+    return translation.call(args.first);
+  } else {
+    return translation.call();
+  }
+}
 
   @override
   bool updateShouldNotify(covariant MonoLocalizationsProvider oldWidget) {
     return oldWidget.delegates != delegates;
   }
 
-  ${_generateLabels(labels)}
+  ${labels.map((e) => e.generateLabel()).join('\n\n')}
 }
 ''';
-}
-
-String _generateLabels(List<Label> labels) {
-  StringBuffer result = StringBuffer();
-  for (var label in labels) {
-    result.write(
-        "String get ${label.name} => _lookup('${label.name}') ?? '${label.name}';");
-  }
-  return result.toString();
 }
