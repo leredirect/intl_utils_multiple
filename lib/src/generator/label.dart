@@ -1220,7 +1220,7 @@ class Label {
       case ContentType.literal:
         return "String get $name => _lookup('$name') ?? '$name';";
       case ContentType.argument:
-        return 'String $name(${_generateDartMethodParameters(args)}) => _lookup($name, args: [${_generateDartMethodArgs(args)}]) ?? $name';
+        return 'String $name(${_generateDartMethodParameters(args)}) => _lookup($name, args: [${_generateDartMethodArgs(args)}]) ?? $name;';
       case ContentType.plural:
       case ContentType.gender:
       case ContentType.select:
